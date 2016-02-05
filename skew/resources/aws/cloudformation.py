@@ -11,8 +11,11 @@
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 import jmespath
+import logging
 
 from skew.resources.aws import AWSResource
+
+LOG = logging.getLogger(__name__)
 
 
 class Stack(AWSResource):
@@ -24,12 +27,15 @@ class Stack(AWSResource):
         for stack in resources:
             stack.data['Resources'] = []
             for stack_resource in stack:
-                stack.data['Resources'].append(
-                    {
-                        'id': stack_resource['PhysicalResourceId'],
-                        'type': stack_resource['ResourceType']
-                    }
-                )
+                try:
+                    stack.data['Resources'].append(
+                        {
+                            'id': stack_resource['PhysicalResourceId'],
+                            'type': stack_resource['ResourceType']
+                        }
+                    )
+                except KeyError as exc:
+                    LOG.info("Stack resource did not contain %s", str(exc))
         return resources
 
     class Meta(object):
