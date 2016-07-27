@@ -7,10 +7,14 @@ class LogGroup(AWSResource):
         service = 'logs'
         type = 'log-group'
         enum_spec = ('describe_log_groups', 'logGroups', None)
-        id = 'arn'
+        id = 'logGroupName'
         filter_name = 'logGroupName'
         filter_type = 'list'
         detail_spec = None
         name = 'logGroupName'
         date = 'creationTime'
         dimension = None
+
+    @property
+    def arn(self):
+        return self.data.get('arn')
