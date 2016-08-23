@@ -131,6 +131,11 @@ class AWSClient(object):
                         time.sleep(1)
                     elif 'AccessDenied' in str(e):
                         done = True
+                    else:
+                        LOG.error("Unhandled Client Error - {}".format(
+                            e.message)
+                        )
+                        raise
                 except Exception:
                     done = True
         if query:
