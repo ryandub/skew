@@ -13,6 +13,8 @@
 import jmespath
 import logging
 
+from botocore.exceptions import ClientError
+
 from skew.resources.aws import AWSResource
 
 LOG = logging.getLogger(__name__)
@@ -35,7 +37,13 @@ class Bucket(AWSResource):
             if location is None:
                 LOG.debug('finding location for %s', r.id)
                 kwargs = {'Bucket': r.id}
-                response = r._client.call('get_bucket_location', **kwargs)
+                try:
+                    response = r._client.call('get_bucket_location', **kwargs)
+                except ClientError as exc:
+                    if 'NoSuchBucket' in exc.message:
+                        continue
+                    else:
+                        raise
                 location = response.get('LocationConstraint', 'us-east-1')
                 if location is None:
                     location = 'us-east-1'
