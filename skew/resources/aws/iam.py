@@ -95,14 +95,14 @@ class InstanceProfile(IAMResource):
         detail_spec = None
         id = 'InstanceProfileId'
         filter_name = None
-        name = 'InstanceProfileId'
+        name = 'InstanceProfileName'
         date = 'CreateDate'
         dimension = None
 
     @classmethod
     def filter(cls, arn, resource_id, data):
         LOG.debug('%s == %s', resource_id, data)
-        return resource_id == data['InstanceProfileId']
+        return resource_id == data['InstanceProfileName']
 
 
 class Policy(IAMResource):

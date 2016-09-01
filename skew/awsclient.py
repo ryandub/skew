@@ -43,6 +43,9 @@ class AWSClient(object):
         self._has_credentials = False
         self.aws_creds = kwargs.get('aws_creds')
         if self.aws_creds is None:
+            self.aws_creds = self._config['accounts'][account_id].get(
+                'credentials')
+        if self.aws_creds is None:
             # no aws_creds, need profile to get creds from ~/.aws/credentials
             self._profile = self._config['accounts'][account_id]['profile']
         self.placebo = kwargs.get('placebo')
@@ -128,6 +131,11 @@ class AWSClient(object):
                         time.sleep(1)
                     elif 'AccessDenied' in str(e):
                         done = True
+                    else:
+                        LOG.error("Unhandled Client Error - {}".format(
+                            e.message)
+                        )
+                        raise
                 except Exception:
                     done = True
         if query:
@@ -136,4 +144,6 @@ class AWSClient(object):
 
 
 def get_awsclient(service_name, region_name, account_id, **kwargs):
+    if region_name == '':
+        region_name = None
     return AWSClient(service_name, region_name, account_id, **kwargs)
