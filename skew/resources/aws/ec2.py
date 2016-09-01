@@ -250,3 +250,19 @@ class VpcPeeringConnection(AWSResource):
         name = 'VpcPeeringConnectionId'
         date = None
         dimension = None
+
+
+class NetworkInterface(AWSResource):
+
+    class Meta(object):
+        service = 'ec2'
+        type = 'network-interface'
+        enum_spec = ('describe_network_interfaces', 'NetworkInterfaceIds',
+                     None)
+        detail_spec = None
+        id = 'NetworkInterfaceId'
+        filter_name = 'NetworkInterfaceIds'
+        filter_type = 'list'
+        name = 'NetworkInterfaceId'
+        date = None
+        dimension = None
