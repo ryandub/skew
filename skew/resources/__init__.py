@@ -28,6 +28,7 @@ ResourceTypes = {
     'aws.ec2.key-pair': 'aws.ec2.KeyPair',
     'aws.ec2.image': 'aws.ec2.Image',
     'aws.ec2.instance': 'aws.ec2.Instance',
+    'aws.ec2.internet-gateway': 'aws.ec2.InternetGateway',
     'aws.ec2.nat-gateway': 'aws.ec2.NatGateway',
     'aws.ec2.network-acl': 'aws.ec2.NetworkAcl',
     'aws.ec2.network-interface': 'aws.ec2.NetworkInterface',
