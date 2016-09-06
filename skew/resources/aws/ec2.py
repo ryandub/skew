@@ -266,3 +266,19 @@ class NetworkInterface(AWSResource):
         name = 'NetworkInterfaceId'
         date = None
         dimension = None
+
+
+class NatGateway(AWSResource):
+
+    class Meta(object):
+        service = 'ec2'
+        type = 'nat-gateway'
+        enum_spec = ('describe_nat_gateways', 'NatGateways',
+                     None)
+        detail_spec = None
+        id = 'NatGatewayId'
+        filter_name = 'NetworkInterfaceIds'
+        filter_type = 'list'
+        name = 'NetworkInterfaceId'
+        date = None
+        dimension = None
