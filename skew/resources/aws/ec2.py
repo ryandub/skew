@@ -11,8 +11,14 @@
 # distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
 # ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
+import logging
 
+from botocore.exceptions import ClientError
+
+import skew.awsclient
 from skew.resources.aws import AWSResource
+
+LOG = logging.getLogger(__name__)
 
 
 class Instance(AWSResource):
@@ -282,3 +288,50 @@ class NatGateway(AWSResource):
         name = 'NetworkInterfaceId'
         date = None
         dimension = None
+
+    @classmethod
+    def enumerate(cls, arn, region, account, resource_id=None, **kwargs):
+        client = skew.awsclient.get_awsclient(
+            cls.Meta.service, region, account, **kwargs)
+        kwargs = {}
+        do_client_side_filtering = False
+        if resource_id and resource_id != '*':
+            # If we are looking for a specific resource and the
+            # API provides a way to filter on a specific resource
+            # id then let's insert the right parameter to do the filtering.
+            # If the API does not support that, we will have to filter
+            # after we get all of the results.
+            filter_name = cls.Meta.filter_name
+            if filter_name:
+                if cls.Meta.filter_type == 'list':
+                    kwargs[filter_name] = [resource_id]
+                else:
+                    kwargs[filter_name] = resource_id
+            else:
+                do_client_side_filtering = True
+        enum_op, path, extra_args = cls.Meta.enum_spec
+        if extra_args:
+            kwargs.update(extra_args)
+        LOG.debug('enum_op=%s' % enum_op)
+        try:
+            data = client.call(enum_op, query=path, **kwargs)
+        except ClientError as e:
+            data = {}
+            # if the error is because the resource was not found, be quiet
+            if 'This request has been administratively disabled.' in e.message:
+                pass
+            elif 'NotFound' not in e.response['Error']['Code']:
+                raise
+        LOG.debug(data)
+        resources = []
+        if data:
+            for d in data:
+                if do_client_side_filtering:
+                    # If the API does not support filtering, the resource
+                    # class should provide a filter method that will
+                    # return True if the returned data matches the
+                    # resource ID we are looking for.
+                    if not cls.filter(arn, resource_id, d):
+                        continue
+                resources.append(cls(client, d, arn.query))
+        return resources
