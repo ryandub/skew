@@ -166,6 +166,16 @@ class Region(ARNComponent):
                              'ap-southeast-2',
                              'ap-northeast-1']
 
+    _ecs_regions = [
+        'us-east-1',
+        'us-west-1',
+        'us-west-2',
+        'eu-west-1',
+        'eu-central-1',
+        'ap-southeast-1',
+        'ap-southeast-2',
+        'ap-northeast-1',
+    ]
     _no_region_required = ['']
 
     _service_region_map = {
@@ -177,6 +187,7 @@ class Region(ARNComponent):
         'lambda': ['us-east-1', 'us-west-2', 'eu-west-1', 'ap-northeast-1'],
         'firehose': ['us-east-1', 'us-west-2', 'eu-west-1'],
         'apigateway': ['us-east-1', 'us-west-2', 'eu-west-1', 'ap-northeast-1'],
+        'ecs': _ecs_regions,
     }
 
     def choices(self, context=None):
