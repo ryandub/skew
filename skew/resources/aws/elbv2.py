@@ -17,6 +17,5 @@ class LoadBalancer(AWSResource):
         dimension = None
 
     @property
-    @property
     def arn(self):
         return self.data.get('LoadBalancerArn')
