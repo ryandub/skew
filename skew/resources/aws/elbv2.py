@@ -8,7 +8,7 @@ class LoadBalancer(AWSResource):
         service = 'elbv2'
         type = 'loadbalancer'
         enum_spec = ('describe_load_balancers',
-                     'LoadBalancers', 'LoadBalancerArn')
+                     'LoadBalancers', None)
         id = None
         filter_name = None
         filter_type = None
@@ -17,5 +17,6 @@ class LoadBalancer(AWSResource):
         dimension = None
 
     @property
+    @property
     def arn(self):
-        return self.data
+        return self.data.get('LoadBalancerArn')
