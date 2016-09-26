@@ -1,4 +1,4 @@
-boto3>=1.2.3
+boto3>=1.4.0
 placebo==0.4.3
 six>=1.9.0
 PyYAML==3.11
