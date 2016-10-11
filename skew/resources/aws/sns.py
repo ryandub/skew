@@ -11,6 +11,7 @@
 
 import logging
 
+from botocore.exceptions import ClientError
 import jmespath
 
 from skew.resources.aws import AWSResource
@@ -88,12 +89,18 @@ class Subscription(AWSResource):
         if data['SubscriptionArn'] in self.invalid_arns:
             self._id = 'PendingConfirmation'
             return
-
         self._id = data['SubscriptionArn'].split(':', 6)[6]
         self._name = ""
 
         detail_op, param_name, detail_path = self.Meta.detail_spec
         params = {param_name: data['SubscriptionArn']}
-        data = client.call(detail_op, **params)
-
-        self.data = jmespath.search(detail_path, data)
+        try:
+            resp = client.call(detail_op, **params)
+            self.data = jmespath.search(detail_path, resp)
+        except ClientError as e:
+            # If the Topic is deleted, we still want to get the ARN for
+            # the SNS subscription.
+            if 'Topic does not exist' in e.message:
+                self.data = {'SubscriptionArn': data['SubscriptionArn']}
+            else:
+                raise
