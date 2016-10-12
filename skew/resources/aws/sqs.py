@@ -21,13 +21,23 @@ class Queue(AWSResource):
         service = 'sqs'
         type = 'queue'
         enum_spec = ('list_queues', 'QueueUrls', None)
-        detail_spec = ('get_queue_attributes', 'QueueUrl', 'QueueUrl')
+        # If you hypothetically have > 700 SQS queues, this will take
+        # a really long time and you will be sad. Commenting out for now.
+        # detail_spec = ('get_queue_attributes', 'QueueUrl', 'QueueUrl')
         id = 'QueueUrl'
         filter_name = 'QueueNamePrefix'
         filter_type = 'scalar'
         name = 'QueueUrl'
         date = None
         dimension = 'QueueName'
+
+    @property
+    def arn(self):
+        return 'arn:aws:%s:%s:%s:%s' % (
+            self._client.service_name,
+            self._client.region_name,
+            self._client.account_id,
+            self.data['QueueName'])
 
     def __init__(self, client, data, query=None):
         super(Queue, self).__init__(client, data, query)
