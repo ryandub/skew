@@ -31,6 +31,14 @@ class Queue(AWSResource):
         date = None
         dimension = 'QueueName'
 
+    @property
+    def arn(self):
+        return 'arn:aws:%s:%s:%s:%s' % (
+            self._client.service_name,
+            self._client.region_name,
+            self._client.account_id,
+            self.data['QueueName'])
+
     def __init__(self, client, data, query=None):
         super(Queue, self).__init__(client, data, query)
         self.data = {self.Meta.id: data,
