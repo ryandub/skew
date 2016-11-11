@@ -127,7 +127,8 @@ class AWSClient(object):
                     done = True
                 except ClientError as e:
                     LOG.debug(e, kwargs)
-                    if 'Throttling' in str(e):
+                    back_off_errors = ['(Throttling)', '(SlowDown)']
+                    if any(i in str(e) for i in back_off_errors):
                         time.sleep(1)
                     elif 'AccessDenied' in str(e):
                         done = True
