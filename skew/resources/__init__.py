@@ -56,6 +56,8 @@ ResourceTypes = {
     'aws.iam.user': 'aws.iam.User',
     'aws.iam.server-certificate': 'aws.iam.ServerCertificate',
     'aws.kinesis.stream': 'aws.kinesis.Stream',
+    'aws.kms.key': 'aws.kms.Key',
+    'aws.kms.alias': 'aws.kms.Alias',
     'aws.logs.log-group' :'aws.logs.LogGroup',
     'aws.lambda.function': 'aws.lambda.Function',
     'aws.rds.db': 'aws.rds.DBInstance',
